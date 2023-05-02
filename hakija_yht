@@ -1,0 +1,154 @@
+//Yliluokka hakija_yht
+
+import java.io.Serializable;
+/**
+ Yliluokkaluokka hakijoiden tietojen hallintaan.
+ Toteuttaa Serializable-rajapinnan, jotta tiedot voidaan tallentaa ja ladata.
+ Implementoi henkilo-rajapinnan, joka sisältää hakija henkilön perustiedot.
+ */
+
+public  abstract class hakija_yht implements Serializable,henkilo{
+
+    /*
+     * Lomakkeen vastaajan  yhteys tiedot
+     */
+
+    /**
+     hakija_yht hakijan etunimi.
+     */
+    public String etu_nimi = "";
+
+    /**
+     hakija_yht hakijan sukunimi.
+     */
+    public String suku_nimi = "";
+    /**
+     hakija_yht hakijan puhelinnumero.
+     */
+    public String puh = "";
+
+    /*
+     * Lomakkeen vastaajan pisteet
+     */
+
+    /**
+     hakija_yht hakijan A-osion pisteet.
+     */
+    public int A_p = 0;
+    /**
+     hakija_yht hakijan B-osion pisteet.
+     */
+    public int B_p = 0;
+
+
+    /*
+     *  luodaan set- ja getmetodit
+     * yhteystietojen ja lomakkeen
+     * pisteiden asettamiseen
+     */
+
+    /**
+     Palauttaa hakijan etunimen.
+     @return Hakijan etunimi.
+     */
+    public String getEtu_nimi() {
+        return etu_nimi;
+    }
+
+    /**
+     Asettaa hakijan etunimen.
+     @param etu_nimi Hakijan etunimi.
+     */
+    public void setEtu_nimi(String etu_nimi) {
+        this.etu_nimi = etu_nimi;
+    }
+
+    /**
+
+     Palauttaa hakijan sukunimen.
+     @return Hakijan sukunimi.
+     */
+    public String getSuku_nimi() {
+        return suku_nimi;
+    }
+
+    /**
+     Asettaa hakijan sukunimen.
+     @param suku_nimi Hakijan sukunimi.
+     */
+    public void setSuku_nimi(String suku_nimi) {
+        this.suku_nimi = suku_nimi;
+    }
+
+    /**
+     Palauttaa hakijan puhelinnumeron.
+     @return Hakijan puhelinnumero.
+     */
+    public String getPuh() {
+        return puh;
+    }
+
+    /**
+     Asettaa hakijan puhelinnumeron.
+     @param puh Hakijan puhelinnumero.
+     */
+    public void setPuh(String puh) {
+        this.puh = puh;
+    }
+
+    /**
+     Palauttaa hakijan A-osion pisteet.
+     @return Hakijan A-osion pisteet.
+     */
+    public int getA_p() {
+        return A_p;
+    }
+
+
+    /**
+     Asettaa hakijan A-osion pisteet.
+     @param a_p Hakijan A-osion pisteet.
+     */
+    public void setA_p(int a_p) {
+        A_p = a_p;
+    }
+
+    /**
+     Palauttaa hakijan B-osion pisteet.
+     @return Hakijan B-osion pisteet.
+     */
+    public int getB_p() {
+        return B_p;
+    }
+
+    /**
+     Asettaa hakijan B-osion pisteet.
+     @param b_p Hakijan B-osion pisteet.
+     */
+    public void setB_p(int b_p) {
+        B_p = b_p;
+    }
+
+
+    /**
+     * Palauttaa tiedot jarkevasti muotoiltuna
+     * @return mystring
+     */
+    public String toString() {
+        String mystring = "\nNimi:" + getEtu_nimi() +" "+getSuku_nimi()+"\n"+ "puh:"+getPuh()+"\n"+
+                "A-osion pisteet:" + getA_p()+"\n"+  "B-osion pisteet:" + getB_p()+"\n"+
+                "Pisteitä yhteensä:"+yht_p();
+        return mystring;
+    }
+
+
+
+    /**
+     *Laskee A- B-osioiden pisteet
+     * @return tulos eli yhteis summa
+     */
+    public int yht_p() {
+        int tulos =getA_p()+getB_p();
+        return tulos;
+    }
+}
