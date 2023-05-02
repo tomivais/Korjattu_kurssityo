@@ -1,0 +1,55 @@
+//Aliluokka opiskelija 
+
+/**
+ AliLuokka opiskelija perii yliluokan hakija_yht.
+ Tyolaisella on kenttina koulu, ala ja lukuvuosi.
+ */
+public class opiskelija extends hakija_yht {
+
+    /*
+     * Tietoja, joita opiskelijalla on
+     */
+    private String koulu;
+    private String ala;
+    private String lukuvuosi;
+
+    /**
+     Asettaa opiskelijan koulun nimen.
+     @param koulu Opiskelijan koulun nimi.
+     */
+    public void setKoulu(String koulu) {
+        this.koulu = koulu;
+    }
+
+    /**
+     Palauttaa opiskelijan alan nimen.
+     @return Opiskelijan alan nimi.
+     */
+    public String getAla() {
+        return ala;
+    }
+
+    /**
+     Asettaa opiskelijan alan nimen.
+     @param ala Opiskelijan alan nimi.
+     */
+    public void setAla(String ala) {
+        this.ala = ala;
+    }
+
+    /**
+     Palauttaa opiskelijan lukuvuoden.
+     @return Opiskelijan lukuvuosi.
+     */
+    public String getLukuvuosi() {
+        return lukuvuosi;
+    }
+
+    /**
+     Asettaa opiskelijan lukuvuoden.
+     @param lukuvuosi Opiskelijan lukuvuosi.
+     */
+    public void setLukuvuosi(String lukuvuosi) {
+        this.lukuvuosi = lukuvuosi;
+    }
+}
