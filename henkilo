@@ -1,0 +1,74 @@
+// Rajapinta henkilo
+
+import java.io.Serializable;
+
+/**
+ * Luodaan rajapinta henkilo, johon
+ * maaritetaan set- ja get- metodeja
+ */
+public interface henkilo extends Serializable {
+
+    /**
+     * @return getEtu_nimi
+     */
+    String getEtu_nimi();
+
+
+    /**
+     * @param n Etu_nimi setmetodi
+     */
+    void setEtu_nimi(String n);
+
+
+    /**
+     * @return Suku_nimi get-metodi
+     */
+    String getSuku_nimi();
+
+    /**
+     * @param n setSuku_nimi set-metodi
+     */
+    void setSuku_nimi(String n);
+
+    /**
+     * @return getPuh get-metodi
+     */
+    String getPuh();
+
+    /**
+     * @param n setPuh set-metodi
+     */
+    void setPuh(String n);
+
+    /**
+     * @return getA_p get-metodi
+     */
+    int getA_p();
+
+    /**
+     * @param a setPuh set-metodi
+     */
+    void setA_p(int a);
+
+    /**
+     * @return getB_p get-metodi
+     */
+    int getB_p();
+
+    /**
+     * @param b setPuh set-metodi
+     */
+    void setB_p(int b);
+
+    /**
+     * @return yht_p pisteiden yhteenlaskua varten
+     */
+    int yht_p();
+
+    /**
+     * @return toString valmista tulostuksen muotoilua
+     * varten.
+     */
+    String toString();
+
+}
