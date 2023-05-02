@@ -1,0 +1,1826 @@
+//Luokka ohjelma 
+
+/*
+ * Importataan kaikki tarvittavat
+ * luokat ja kirjastot.
+ */
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.*;
+
+import javafx.scene.text.Font;
+import javafx.scene.image.*;
+import javafx.scene.layout.GridPane;
+
+/*
+ * Luodaan luokka ohjelma, joka laajennetaan
+ *  Application- luokan ominaisuuksilla
+ *
+ *  Luokan taytyy toteuttaa rajapinta Serializable
+ *  jotta se voidaan tallentaa tiedostoon.
+ */
+
+/**
+ * Luokka ohjelman  kaikille
+ * naytoille ja toiminnoille.
+ */
+public class ohjelma extends Application implements Serializable {
+
+    /*
+     * Luodaan stage-luokan ilmentyma ikkuna
+     *
+     * Lisataan siihen transient, jolloin tallentamisen
+     * yhteydessa sita ei oteta huomioon.
+     * Ilman transien "merkkausta" tallentamisen yhteydessa
+     * ohjelma ottaa tallennuksessa huomioon javafx elementit
+     * ja ei suorita tallennusta vaan antoi virheen.
+     *
+     * Transien lisatty siis kaikkiin javafx elementteihin.
+     * (Kyseinen ongelma ratkesi kaverin avustuksella)
+     */
+    transient Stage ikkuna;
+
+    /*
+     * Luodaan Scene luokan olioiden ilmentymia
+     * jolloin saadaan useita "ruutuja", jotka sijoitetaan
+     * vuorotellen ikkunaan.
+     */
+    transient Scene scene1, scene2, scene3,scene4,scene5,scene6,scene7,scene8;
+
+    /*
+     * Luodaan fontit lomakkeen ja ohjelman teksti sisallon muotoiluun
+     * otsikoita seka "normaalia" tekstia varten.
+     */
+    private final transient Font otsikko=new Font("Rockwell",20);
+
+    private final transient Font normal=new Font("Rockwell",15);
+
+
+    /*
+     * Luodaan TextFild luokan ilmentymia
+     * joihin kayttaja voi syottaa tietoa.
+     */
+    private transient TextField enimi = new TextField();
+    private transient TextField snimi = new TextField();
+    private transient TextField puh = new TextField();
+
+    private transient TextField koulutyo = new TextField();
+
+    private transient TextField ala = new TextField();
+
+    private transient TextField vuodet = new TextField();
+
+    /*
+     * Luodaan boolean arvo tila, joka kertoo onko opiskelija
+     * checkBox painike aktiivinen, jolloin sen totuusarvoa
+     * voidaan hyodyntaa eri metodeissa.
+     */
+    private boolean tila;
+
+    /**
+     *
+     * @return luodaan isTila() getmetodi tilan totuusarvon
+     * hyodyntamiseksi.
+     */
+    public boolean isTila() {
+        return tila;
+    }
+
+    /**
+     *
+     * @param tila  luodaan setTila(boolean tila)-metodi tilan
+     * totuusarvon muuttamiseksi ohjelmassa.
+     */
+    public void setTila(boolean tila) {
+        this.tila = tila;
+    }
+
+
+    /*
+     * Luodaan lomakkeiden A- ja B-osioihin
+     * pisteet muuttujat, joihin pisteet lasketaan.
+     */
+    private int A_pisteet;
+    private int B_pisteet;
+
+    /**
+     *
+     * @param a_pisteet setmetodi pisteiden asettamiseen
+     */
+    public void setA_pisteet(int a_pisteet) {
+        A_pisteet = a_pisteet;
+    }
+
+    /**
+     *
+     * @param b_pisteet setmetodi pisteiden asettamiseen
+     */
+    public void setB_pisteet(int b_pisteet) {
+        B_pisteet = b_pisteet;
+    }
+
+
+
+
+    /*
+     * Luodaan boolean arvot oenimi,osnimi,opuh
+     * joiden taytyy olla true, jotta lomakkeen
+     * yhteystieto kohdasta paasee eteenpain.
+     * Tarkoituksena asettaa ne todeksi
+     * kun syotteet ovat asianmukaisia.
+     */
+    public boolean oenimi=false;
+    public boolean osnimi=false;
+    public boolean opuh=false;
+
+    /**
+     *
+     * @param oenimi luodanan setmetodi totuusarvon asettamiseksi
+     */
+    public void setOenimi(boolean oenimi) {
+        this.oenimi = oenimi;
+    }
+
+    /**
+     *
+     * @param osnimi luodanan setmetodi totuusarvon asettamiseksi
+     */
+    public void setOsnimi(boolean osnimi) {
+        this.osnimi = osnimi;
+    }
+
+    /**
+     *
+     * @param opuh luodanan setmetodi totuusarvon asettamiseksi
+     */
+    public void setOpuh(boolean opuh) {
+        this.opuh = opuh;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    /**
+     *
+     * @param ikkuna
+     * Kutsutaan ensimmäista metodia (nayttoa) vaihda_ikkuna1
+     */
+    @Override
+    public void start(Stage ikkuna) {
+        /*
+         * Asetetaan vastaajan
+         * "profiilia" maarittava tila totuusarvo
+         * falseksi.
+         */
+        setTila(false);
+
+
+        /*
+         * Alustetaan ikkuna, jotta
+         * siihen voidaan kulloinkin
+         * vaihtaa Scenen ilmentyma
+         */
+        this.ikkuna = ikkuna;
+
+        // Kutsutaan "Alku-etusivun vaihda_ikkuna1-metodia"
+        vaihda_ikkuna1();
+    }
+    public void vaihda_ikkuna1(){
+        /*
+         * Luodaan pystysuuntainen
+         *  VBox- pane valikko johon
+         *  voidaan asettaa komponentteja
+         */
+        VBox valikko = new VBox();
+
+        /*
+         * Luodaan valikkon 10 bixelin
+         * valit komponettien valille.
+         * setSpacing metodin avulla.
+         */
+        valikko.setSpacing(10);
+
+        /*
+         * Luodaan valikkoon aloitus ja tulokset
+         * buttonit ja asetetaan niihin aiemmin
+         * luotu fontti setFont() metodin avulla
+         */
+        Button aloitus=new Button("Aloita kysely ");
+        aloitus.setFont(normal);
+        Button tulokset=new Button("Tarkastele tuloksia");
+        tulokset.setFont(normal);
+
+
+        /*
+         * Viikolla 6 vertaisarvioinnissa mikro-tehtavassa
+         * tuli vastaan opiskelija toverin tapa luoda HTML-linkki
+         * kuvaa olioon.
+         * (Jotta linkki toimii edellytetaan verkkoyhteytta.
+         * muussa tapauksessa kuvaa ei tule mukaan ohjelmaan.
+         */
+        /*
+         * Luodaan imageluokan olio logo ja tehdaan siita
+         * imageview-luokan olio ilmentyma logonode
+         * jolloin saadaan hyodyllisia asettelu metodeja kayttoon.
+         * (Kyseinen tapa myos opittu kaverilta)
+         */
+        Image logo = new Image("https://i.imgur.com/4jv1pwH.jpg");
+        ImageView logonode = new ImageView(logo);
+
+        /*
+         *Asetetaan logonoden koko leveys-suunnassa setFitHeight avulla
+         * ja kaytetaan setPreserveRatio(true) suurentamaan
+         * pituus-suunnassa sailyttaen kuvan alkuperaiset
+         * suhteet.
+         */
+        logonode.setFitHeight(125);
+        logonode.setPreserveRatio(true);
+
+        /*
+         * Asetetaan valikkoon
+         * logonode ja button-oliot ja asetetaan ne keskelle.
+         */
+        valikko.getChildren().addAll(logonode,aloitus,tulokset);
+        valikko.setAlignment(Pos.CENTER);
+
+
+        /*
+         * luodaan scene-luokan olio scene1, johon
+         * valikko asetetaan ja luodaan siita halutun
+         * kokoinen.
+         */
+        scene1 = new Scene(valikko, 700, 700);
+        /*
+         * luodaan ikkunalle otsikko
+         */
+        ikkuna.setTitle("Alku");
+        ikkuna.setScene(scene1);
+        ikkuna.show();
+
+
+        /*
+         *  Jos aloitus buttoni valitaan kutsutaan
+         *  metodia vaihda_ikkuna_2
+         */
+        aloitus.setOnAction(actionEvent -> vaihda_ikkuna2());
+
+        /*
+         * Jos tulokset buttoni valitaan
+         * edetaan tulokset ikkunaan.
+         */
+        tulokset.setOnAction(actionEvent -> tulokset_valikko());
+
+    }
+
+    /*
+     * vaihda_ikkuna2()-metodi, johon edetaan vain
+     * paaluokasta.
+     */
+    public void vaihda_ikkuna2() {
+        /*
+         * Luodaan GridPane olioluoka
+         * olio panel, johon voidaan
+         * asettaa komponetteja riveittäin ja
+         * sarakkeittain.
+         */
+        GridPane panel = new GridPane();
+
+        /*
+         * Jatetaan pystysuunnassa tilaa
+         * komponettien valille
+         */
+        panel.setVgap(10);
+        /*
+         * Luodaan uusi tai tassa tapauksessa saman sisaltoine
+         * Image olioluokan logo.
+         * Luodaan imageluokan olio logo ja tehdaan siita
+         *imageview-luokan olio ilmentyma logonode
+         * jolloin saadaan hyodyllisia asettelu metodeja kayttoon.
+         * (Kyseinen tapa  opittu kaverilta)
+         */
+        Image logo = new Image("https://i.imgur.com/4jv1pwH.jpg");
+        ImageView logonode = new ImageView(logo);
+        /*
+         *Asetetaan logonoden koko leveys-suunnassa
+         * ja kaytetaan setPreserveRatio(true) suurentamaan
+         * pituus-suunnassa sailyttaen kuvan alkuperaiset
+         * suhteet.
+         */
+        logonode.setFitHeight(125);
+        logonode.setPreserveRatio(true);
+
+        /*
+         * Asetetaan logonode x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(logonode, 0, 0);
+
+
+        /*
+         * Ohje1 Label, kayttajan syotteille.
+         */
+        Label ohje1 = new Label("Anna kyseiset tiedot:\n" +
+                "(Pakolliset kentat on merkitty merkillä: *)");
+        /*
+         * Kaytetaan fonttiin asettamiseen ohje1 oliolle
+         * setFont-metodia
+         */
+        ohje1.setFont(otsikko);
+        /*
+         * Asetetaan ohje1 x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(ohje1, 0, 1);
+
+        /*
+         * syotteen ohje Label etunimi.
+         */
+        Label etunimi = new Label("etunimi(*):");
+        /*
+         * Kaytetaan fonttiin asettamiseen etunimi oliolle
+         * setFont-metodia
+         */
+        etunimi.setFont(normal);
+        /*
+         * Asetetaan etunimi label ja enimi textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(etunimi, 0, 2);
+        panel.add(enimi, 1, 2);
+
+        /*
+         * syotteen ohje Label sukunimi.
+         */
+        Label sukunimi = new Label("sukunimi(*):");
+        /*
+         * Kaytetaan fonttiin asettamiseen sukunimi oliolle
+         * setFont-metodia
+         */
+        sukunimi.setFont(normal);
+        /*
+         * Asetetaan sukunimi label snimi ja textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(sukunimi, 0, 3);
+        panel.add(snimi, 1, 3);
+
+
+        /*
+         * syotteen ohje Label puhelin.
+         */
+        Label puhelin = new Label("puhelinnumero(*):");
+        /*
+         * Kaytetaan fonttiin asettamiseen puhelin oliolle
+         * setFont-metodia
+         */
+        puhelin.setFont(normal);
+        /*
+         * Asetetaan puhelin label ja puh textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(puhelin, 0, 4);
+        panel.add(puh, 1, 4);
+
+
+        /*
+         * syötteen ohje Label tyokoulu
+         */
+        Label tyokoulu = new Label("Viimeisin alasi työpaikka tai nykyinen koulusi:");
+        /*
+         * Kaytetaan fonttiin asettamiseen tyokoulu oliolle
+         * setFont-metodia
+         */
+        tyokoulu.setFont(normal);
+        /*
+         * Asetetaan tyokoulu label ja koulutyo textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(tyokoulu, 0, 5);
+        panel.add(koulutyo, 1, 5);
+
+
+        /*
+         * syotteen ohje Label toimiala.
+         */
+        Label toimiala = new Label("Tutkintosi tai ala jota opiskelet:");
+        /*
+         * Kaytetaan fonttiin asettamiseen toimiala oliolle
+         * setFont-metodia
+         */
+        toimiala.setFont(normal);
+        /*
+         * Asetetaan toimiala label ja ala textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(toimiala, 0, 6);
+        panel.add(ala, 1, 6);
+
+
+        /*
+         * syötteen ohje Label v.
+         */
+        Label v = new Label("Kokemuksesi tutkintoa vastaavasta työstä vuosina tai \n nykyinen lukuvuotesi opiskeluissasi:");
+        /*
+         * Kaytetaan fonttiin asettamiseen v oliolle
+         * setFont-metodia
+         */
+        v.setFont(normal);
+        /*
+         * Asetetaan v label ja vuodet textfield  x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(v, 0, 7);
+        panel.add(vuodet, 1, 7);
+
+
+        /*
+         * Luodaan checkBox o
+         */
+        CheckBox o=new CheckBox("Olen opiskelija");
+        /*
+         * Kaytetaan fonttiin asettamiseen o oliolle
+         * setFont-metodia
+         */
+        o.setFont(normal);
+        /*
+         * Asetetaan o CheckBox x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon.
+         */
+        panel.add(o,1,8);
+
+        /*
+         *  Checkbox o:n valitseminen  muuttaa tila muuttujan
+         *  totuusarvoa, mikali kayttaja valitsee olevansa
+         *  opiskelija
+         */
+        o.setOnAction(e->{
+            setTila(true);
+
+        });
+
+        /*
+         * Luodaan tallenna button olio
+         */
+        Button tallenna=new Button("Tallenna");
+        /*
+         * Kaytetaan fonttiin asettamiseen o oliolle
+         * setFont-metodia
+         */
+        tallenna.setFont(normal);
+        /*
+         * Asetetaan tallenna button x- ja y-koordinaatiston
+         * mukaan rivi- ja saraketasolla panel olioon ja
+         * asetetaan se keskelle setAlignment metodilla.
+         */
+        panel.add(tallenna, 1, 9);
+        panel.setAlignment(Pos.CENTER);
+
+
+        /*
+         * luodaan scene-luokan olio scene2, johon
+         * panel asetetaan ja luodaan siita halutun
+         * kokoinen.
+         */
+        scene2 = new Scene(panel, 700, 700);
+        ikkuna.setTitle("Yhteystiedot");
+        ikkuna.setScene(scene2);
+
+        /*
+         * Toiminto, kun tallenna buttonia painetaan
+         */
+        tallenna.setOnAction(actionEvent ->{
+                    /*
+                     * Tehdaan do-while
+                     * rakenne, jossa kayttajalta vaaditaan syotteilta
+                     * tiettyjä ehtoja ennen, kuin edetaan
+                     *eteenpäin
+                     */
+                    do{
+                        /*
+                         * Luodaan nimille ja puhnumerolle pituus muuttujat
+                         */
+                        int epituus = enimi.getText().length();
+                        int spituus = snimi.getText().length();
+                        int puhpituus = puh.getText().length();
+
+                        /*
+                         * Etunimi pituus muuttujan epituus
+                         * taytyy olla vahintaan 2, mutta lyhempi kuin 20.
+                         */
+                        if ((epituus >= 2) && (epituus < 20))
+                            setOenimi(true);
+                            /*
+                             * Muuten textfieldiin annetaan syy miksi syote ei kelpaa
+                             */
+                        else
+                            enimi.setText("Nimi liian lyhyt tai pitkä");
+
+
+                        /*
+                         * Sukunimi pituus muuttujan spituus
+                         * taytyy olla vahintaan 2, mutta lyhempi kuin 40.
+                         */
+                        if ((spituus >= 2) && (spituus < 40))
+                            setOsnimi(true);
+                        else
+                            /*
+                             * Muuten textfieldiin annetaan syy miksi syote ei kelpaa
+                             */
+                            snimi.setText("Nimi liian lyhyt tai pitka");
+
+
+                        /*
+                         * Puhelinnumeron pituus muuttujan puhpituus
+                         * taytyy olla 10 tai 13
+                         */
+                        if (puhpituus == 10||puhpituus==13)
+                            setOpuh(true);
+                        else
+                            /*
+                             * Muuten textfieldiin annetaan syy miksi syote ei kelpaa
+                             */
+                            puh.setText("Puh liian lyhyt tai pitka");
+
+                        /*
+                         * Edetaam tahan ja ohjelmaan annetaan syy miksi ei
+                         * edeta pois silmukasta
+                         */
+                        if ((oenimi == false)||(osnimi==false)||(opuh==false))
+                            System.out.println("Tiedot eivät täytä vaatimuksia");
+                        vaihda_ikkuna2();
+                        break;
+                    }
+
+                    /*
+                     * Kun do-while ehdot tayttyvat
+                     */
+                    while (!((oenimi == true) && (osnimi == true) && (opuh == true)));
+
+                    if ((oenimi==true)&&(osnimi==true)&&(opuh==true)){
+                        System.out.println(" Kelvolliset tiedot annettu.");
+                        /*
+                         * Kutsutaan metodia luo_hakiaja(), kun syotetyt tiedot ovat
+                         * asialliset
+                         */
+                        luo_hakija();
+                    }
+                }
+        );}
+
+    /*
+     * luo_hakija() metodi
+     */
+    public void   luo_hakija() {
+        /*
+         * Kaytetaan String.format()-metodia
+         * muuttamaan Textfiled sisalto merkeiksi
+         * joita voidaan tallentaa olioihin
+         */
+        String etunimi = String.format(enimi.getText());
+        String sukunimi = String.format(snimi.getText());
+        String puhelin = String.format(puh.getText());
+        String kt=String.format(koulutyo.getText());
+        String al=String.format(ala.getText());
+        String vuo=String.format(vuodet.getText());
+
+        /*
+         * Mikali kayttaja on valinnut syottaessaan yhteystiedot
+         * muut tiedot olevansa opiskelija CheckBoxista on muuttuja
+         * tilan Boolean arvo true, jolloin luodaan opiskelija hakija.
+         */
+        if (isTila()==true) {
+            opiskelija hakija = new opiskelija();
+            hakija.setEtu_nimi(etunimi);
+            hakija.setSuku_nimi(sukunimi);
+            hakija.setPuh(puhelin);
+            hakija.setKoulu(kt);
+            hakija.setAla(al);
+            hakija.setLukuvuosi(vuo);
+            vaihda_ikkuna3(hakija);
+
+        }
+        /*
+         * Mikali tilan boolean arvo on false
+         * luodaan Tutkinnon omaava hakija kyseisilla tiedoilla.
+         */
+        else if (isTila()==false) {
+            tyolainen hakija = new tyolainen();
+            hakija.setEtu_nimi(etunimi);
+            hakija.setSuku_nimi(sukunimi);
+            hakija.setPuh(puhelin);
+            hakija.setViimeisin_tyo(kt);
+            hakija.setTutkinto(al);
+            hakija.setMonta_vuotta(vuo);
+
+            /*
+             * kutsutaan metodia vaihda_ikkuna3 ja valitetaan
+             * luotu hakija.
+             */
+            vaihda_ikkuna3(hakija);
+        }
+
+    }
+
+    /*
+     * vaihda_ikkuna3() metodi
+     * @param hakija
+     */
+    public void vaihda_ikkuna3(hakija_yht hakija) {
+        /*
+         *"Alustetaan" asetetaan, A_pisteet muuttuja
+         * nollaksi, jotta pisteet ovat nolla aluksi
+         * myös mikali useita hakijoita tayttaa lomakkkeen.
+         */
+        setA_pisteet(0);
+
+        /*
+         * Luodaan uusi valikko
+         * joka on pystysuuntainen
+         * ja asetetaan siihen komponetteina
+         * vaihtoehtoPane seka kysymykset
+         */
+        VBox valikko = new VBox();
+        /*
+         * Asetetaan valit komponetteihin
+         * ja setAlignment avulla valikko keskelle
+         */
+        valikko.setSpacing(10);
+        valikko.setAlignment(Pos.CENTER);
+        /*
+         *  Luodaan ohje Label kysymyksiin
+         *  vastaamisen ohjaamiseksi.
+         */
+        Label ohje = new Label("Vastaa kysymyksiin yksi parhaiten kuvaava vaihtoehto.");
+        /*
+         * Kaytetaan fonttiin asettamiseen ohje oliolle
+         * setFont-metodia
+         */
+        ohje.setFont(otsikko);
+        /*
+         * Kaytetaan setStyle-metodia
+         * yliviivaaukseen.
+         */
+        ohje.setStyle("-fx-background-color: BEIGE;");
+
+        /*
+         * Asetetaan label ohje valikkoon
+         */
+        valikko.getChildren().add(ohje);
+
+
+        /*
+         * Luodaan kysymykset ja asetetaan ne tauluun
+         * Chat-GTP:n idea hyodantaa taulurakennetta.
+         */
+        String[] kysymykset = {"1.Selviydytkö mielestäsi nykyisestä arjestasi hyvin? "
+                , "2. Koen, että arki on enimmäkseen mielekästä.",
+                "3. Koen onnistumisen tunteita arjessani.",
+                "4.Koen osaavani olla luontevasti ihmisten kanssa.",
+                "5. Arjessani en kyllästy, mikäli joudun viettämään liian kauan aikaa itsekseni.",
+                "6. Osaatko olla piittaamatta sinuun kohdistuvasta " +
+                        "kritiikistä, mikäli sille ei ole aihetta?",
+                "7. Osaan toimia rationaalisesti hankalissa ja nopeissa " +
+                        "tilanteissa.",
+                "8. Osaan toimia tiimityöntekijänä luontevasti, vaikken" +
+                        " pitäisi jostakin ryhmän henkilöstä. ",
+                "9. Osaan olla kärsivällinen, vaikka ryhmässä" +
+                        "työskentelyssä ilmenee erilaisia ongelmia.\n",
+                "10. Uskallan useimmiten tuoda ilma havaitsemani ongelmat yhteisössäni. \n"
+        };
+
+
+        /*
+         * Lisataan kysymykset ja vaihtoehdot
+         * valikkoon for-silmukalla.
+         */
+        for ( int i = 0; i < kysymykset.length; i++) {
+
+            /*
+             * Luodanan radiobuttonit, lomakkeeseeseen
+             */
+            RadioButton valintoja1 = new RadioButton("Kyllä");
+            RadioButton valintoja2 = new RadioButton("Ehkä");
+            RadioButton valintoja3 = new RadioButton("Ei");
+
+            /*
+             * Asetetaan radiobuttoneihin setfont
+             * avulla aiemmin luotu fontti normal
+             */
+            valintoja1.setFont(normal);
+            valintoja2.setFont(normal);
+            valintoja3.setFont(normal);
+
+            /*
+             * Asetetaan luodut radiobuttonit
+             * taulukkoon.
+             */
+            RadioButton[] valintao = {valintoja1};
+            RadioButton[] valintan = {valintoja2};
+            RadioButton[] valintav = {valintoja3};
+
+            /*
+             * Luodaan label olioita joihin kysymykset
+             * listalta asetetaan.
+             */
+            Label kysymysLabel = new Label(kysymykset[i]);
+            /*
+             * Asetetaan labeliin setFont avulla
+             * normal fontti ja setStyle
+             * avulla labelin tausta variksi GAINSBORO
+             */
+            kysymysLabel.setFont(normal);
+            kysymysLabel.setStyle("-fx-background-color: GAINSBORO;");
+
+            /*
+             * Luodaan vaakasuuntainen
+             * "vaihtoehtopane" johon voidaan asettaan
+             * radiobuttonit
+             */
+            HBox vaihtoehtoPane = new HBox();
+            /*
+             * Asetetaan setSpacing avulla
+             * komponenteille valit.
+             */
+            vaihtoehtoPane.setSpacing(10);
+
+            /*
+             * Tehda ToggleGroup johon
+             * luodut Radiobuttonit voidaan
+             * asettaa, jotta vain kylla,ei tai ehka
+             * voi olla yksi kerrallaan valittuna.
+             */
+            ToggleGroup vaihtoehdotGroup = new ToggleGroup();
+
+            /*
+             * Asetetaan forsilmukan avulla
+             * radiobuttonit ToggleGroup vaihtoehdotGrouppiin
+             * Ja se taman jalkeen asetetaan ne vaihtoehtoPaneen
+             *
+             */
+            for (RadioButton oikein : valintao) {
+                valintoja1.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane.getChildren().add(valintoja1);
+
+            }
+
+            for (RadioButton neutraali : valintan) {
+                valintoja2.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane.getChildren().add(valintoja2);
+
+            }
+            for (RadioButton ei : valintav) {
+                valintoja3.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane.getChildren().add(valintoja3);
+            }
+            /*
+             * Asetetaan kysymysLabel ja vaihtoehtoPane
+             * valikko Paneen.
+             */
+            valikko.getChildren().addAll(kysymysLabel, vaihtoehtoPane);
+            /*
+             * Asetetaan KysymysLabel ja vaihtoehtoPane
+             * keskelle.
+             */
+            kysymysLabel.setAlignment(Pos.CENTER);
+            vaihtoehtoPane.setAlignment(Pos.CENTER);
+
+            /*
+             * Luodaan kuuntelija ja if ehdot
+             * kuinka pisteita annetaan
+             * eri valinnoista.
+             */
+            vaihtoehdotGroup.selectedToggleProperty().addListener((observable, oldVal, newVal) -> {
+                if (newVal == valintoja1) {
+                    setA_pisteet(A_pisteet + 3);
+                }
+                if (newVal == valintoja2) {
+                    setA_pisteet(A_pisteet + 1);
+
+                }
+                if (newVal == valintoja3) {
+                    setA_pisteet(A_pisteet + 0);
+                }
+            });
+        }
+
+        /*
+         * Luodaan tallenna Button
+         */
+        Button tallenna=new Button("Tallenna");
+        /*
+         * Asetetaan setFont avulla normal fontti.
+         */
+        tallenna.setFont(normal);
+
+        /*
+         * Tehdaan Pane johon
+         * Button tallenna asetetaan.
+         */
+        valikko.getChildren().addAll(tallenna);
+
+
+        /*
+         * luodaan scene-luokan olio scene3, johon
+         * valikko asetetaan ja luodaan siita halutun
+         * kokoinen.
+         */
+        scene3 = new Scene(valikko, 700, 700);
+        ikkuna.setTitle("Kysely A");
+        ikkuna.setScene(scene3);
+
+        /*
+         * Luodaan toiminto, kun talenna buttonia klikataan
+         * kutsutaan vaihda_ikkuna4 metodia ja valitetaan hakija
+         */
+        tallenna.setOnAction(actionEvent -> vaihda_ikkuna4(hakija));
+    }
+
+    /**
+     * vaihda_ikkuna4() metodi
+     * @param hakija
+     */
+    public void vaihda_ikkuna4(hakija_yht hakija) {
+        /*
+         *"Alustetaan" asetetaan, B_pisteet muuttuja
+         * nollaksi, jotta pisteet ovat nolla aluksi
+         * myos mikali useita hakijoita tayttaa lomakkkeen.
+         */
+        setB_pisteet(0);
+        /*
+         * Luodaan  Vbox
+         * johon erilaisia kombonetteja voidaan asettaa
+         * pystysuunnassa.
+         */
+        VBox valikko2 = new VBox();
+        /*
+         * Asetetaan setSpansing metodin avulla
+         * komponenteilla valit ja setAlignment
+         * avulla se keskelle.
+         */
+        valikko2.setSpacing(10);
+        valikko2.setAlignment(Pos.CENTER);
+
+        /*
+         * Luodaan Label luokan ilmentyma ohje2
+         */
+        Label ohje2 = new Label("Vastaa kysymyksiin yksi parhaiten kuvaava vaihtoehto.");
+        /*
+         * Asetetaan setFont avulla otsikon fontti
+         */
+        ohje2.setFont(otsikko);
+        /*
+         * Asetetaan setStyle avulla ohje2 tausta
+         * variksi BEIGE
+         */
+        ohje2.setStyle("-fx-background-color: BEIGE;");
+        /*
+         * Asetetaan ohje2 valikkoon
+         */
+        valikko2.getChildren().add(ohje2);
+
+
+        /*
+         * Ludoan kysymykset ja asetetaan ne tauluun
+         */
+        String[] kysymykset2 = {"1.Onko sinulla aiempaa kokemusta kyseisen kaltaisesta työstä? "
+                , "2.Oletko valmis tekemäämn ylitöitä tarvittaessa?",
+                "3.Oletko valmis matkustamaan työsi vuoksi?",
+                "4.Oletko valmis työhön, jossa työnpalkka voi vaihdella " +
+                        "työkohteen mukaan.",
+                "5. Osaatko tehdä itsenäisiä päätöksiä ilman " +
+                        "esihenkilön valvontaa.",
+                " 6. Oletko valmis kehittämään osaamistasi uusien " +
+                        "teknologien käytössä. ",
+                "7.Oletko valmis asiakaspalvelu tilanteissa" +
+                        "puhumaan englantia.",
+                "8. Uskallan kysyä apua työni esimieheltä tarvittaessa. ",
+                "9. Voin tarvittaessa olla tavoitettavissa myös työajan ulkopuolella.",
+                "10. Olet valmis työn vaatiessa käymään erilaisissa koulutuksissa,\n" +
+                        "\tjotka voivat kestää jopa useamman kuukauden. "
+        };
+
+
+        /*
+         * Lisataan kysymykset ja vaihtoehdot valintoja
+         * valikkoon for-silmukalla.
+         */
+        for (int i = 0; i < kysymykset2.length; i++) {
+
+            /*
+             * Luodaan radiobuttonit eri valinta vaihtoehdoille
+             */
+            RadioButton valintoja1 = new RadioButton("Kyllä");
+            RadioButton valintoja2 = new RadioButton("Ehkä");
+            RadioButton valintoja3 = new RadioButton("Ei");
+
+            /*
+             * Asetetaan radiobuttoneille fontit
+             */
+            valintoja1.setFont(normal);
+            valintoja2.setFont(normal);
+            valintoja3.setFont(normal);
+
+
+            /*
+             * Asetetaan radiobuttonit omiin listoihin
+             */
+            RadioButton[] valintao = {valintoja1};
+            RadioButton[] valintan = {valintoja2};
+            RadioButton[] valintav = {valintoja3};
+
+
+            /*
+             * Luodaan kysymys label johon kysymyslistan
+             * alkiot lisataan yksitelleen omaan kysymysLabel2
+             *  olioon.
+             */
+            Label kysymysLabel2 = new Label(kysymykset2[i]);
+            /*
+             * Asetetaan setFont avulla fontti
+             */
+            kysymysLabel2.setFont(normal);
+            /*
+             * Asetetaan setStyle avulla
+             * tausten vari KysymysLabeliin
+             */
+            kysymysLabel2.setStyle("-fx-background-color: GAINSBORO;");
+
+
+            /*
+             * Luodaan HBox eli vaakasuuntainen
+             * pane johon asetetaan komponentit
+             */
+            HBox vaihtoehtoPane2 = new HBox();
+            /*
+             * Asetetaan setSpacing-metodin avulla
+             * valit komponenteille.
+             */
+            vaihtoehtoPane2.setSpacing(10);
+
+            /*
+             * Luodaan ToggleGroup luokan ilmentyma vaihtoehdotGroup
+             */
+            ToggleGroup vaihtoehdotGroup = new ToggleGroup();
+            /*
+             * Asetetaan forsilmukan avulla
+             * radiobuttonit ToggleGroup vaihtoehdotGrouppiin
+             * Ja se taman jalkeen asetetaan ne vaihtoehtoPaneen
+             */
+            for (RadioButton oikein : valintao) {
+                valintoja1.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane2.getChildren().add(valintoja1);
+
+            }
+
+            for (RadioButton neutraali : valintan) {
+                valintoja2.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane2.getChildren().add(valintoja2);
+
+            }
+            for (RadioButton ei : valintav) {
+                valintoja3.setToggleGroup(vaihtoehdotGroup);
+                vaihtoehtoPane2.getChildren().add(valintoja3);
+
+            }
+            /*
+             * Asetetaan valikko2
+             * kysymyslabelit2 ja vaihtoehtoPane2
+             */
+            valikko2.getChildren().addAll(kysymysLabel2, vaihtoehtoPane2);
+            /*
+             * Asetaan setAlignment avulla
+             * komponentit keskelle
+             */
+            kysymysLabel2.setAlignment(Pos.CENTER);
+            vaihtoehtoPane2.setAlignment(Pos.CENTER);
+
+            /*
+             * Luodaan kuuntelija vaihtoehdotGroupille
+             * ehdot joiden avulla eri vastausvaihtoehdoista
+             * annetaan pisteita if-ehdoilla
+             */
+            vaihtoehdotGroup.selectedToggleProperty().addListener((observable, oldVal, newVal) -> {
+
+                if (newVal == valintoja1) {
+                    setB_pisteet(B_pisteet + 3);
+
+                }
+                if (newVal == valintoja2) {
+                    setB_pisteet(B_pisteet + 1);
+
+                }
+                if (newVal == valintoja3) {
+                    setB_pisteet(B_pisteet + 0);
+
+                }
+            });
+        }
+
+        /*
+         * Tehdaan tallenna button
+         */
+        Button tallenna=new Button("Tallenna");
+        /*
+         * Asetetaan setFont-metodin avulla fontti
+         */
+        tallenna.setFont(normal);
+
+        /*
+         * Asetetaan tallenna button valikkoon
+         */
+        valikko2.getChildren().addAll(tallenna);
+
+        /*
+         * Luodaan scene4 ja asetetaan siihen
+         * valikko2
+         */
+        scene4 = new Scene(valikko2, 700, 700);
+        ikkuna.setTitle("Kysely B");
+        ikkuna.setScene(scene4);
+        /*
+         * Luodaan tapahtuma, kun tallenna buttonia
+         * painetaan kutsutaan luo_pisteet-metodia ja valitetaan
+         * taas hakija
+         */
+        tallenna.setOnAction(actionEvent -> luo_pisteet(hakija));
+    }
+
+    /**
+     *
+     * @param hakija asetetaan hakijaan setA_p ja setB_p
+     * avulla pisteet metodissa luo_pisteet()
+     */
+    public void luo_pisteet(hakija_yht hakija) {
+        hakija.setA_p(A_pisteet);
+        hakija.setB_p(B_pisteet);
+        /*
+        ALustetaan tekstfield kentät tyhjäksi ja asetetaan Oenimi yms alkuperäiseen falseen,
+        ohjelman uudelleen ajoa varten.
+         */
+        enimi.clear();
+        snimi.clear();
+        puh.clear();
+        koulutyo.clear();
+        ala.clear();
+        vuodet.clear();
+
+        setOenimi(false);
+        setOpuh(false);
+        setOsnimi(false);
+        setTila(false);
+
+        /*
+         * kutsutaan lopuksi metodia
+         * vaihda_ikkuna5 ja valitetaan edelleen hakija
+         */
+        vaihda_ikkuna5(hakija);
+
+    }
+
+    /*
+     * vaihda_ikkuna5() metodi
+     * @param hakija
+     */
+    public void vaihda_ikkuna5(hakija_yht hakija) {
+        /*
+         * Luodaan pystysuuntainen pane
+         * johon voidaan asettaa komponentteja
+         */
+        VBox valikko5 = new VBox();
+        /*
+         * Asetetaan komponenteille
+         * setSpacing-metodin avulla valit
+         */
+        valikko5.setSpacing(10);
+
+        /*
+         * Luodaan uusi tai tassa tapauksessa taas saman sisaltoine
+         * Image olioluokan logo.
+         * Luodaan imageluokan olio logo ja tehdaan siita
+         *imageview-luokan olio ilmentyma logonode
+         * jolloin saadaan hyodyllisio asettelu metodeja kayttoon.
+         * (Kyseinen tapa  opittu kaverilta)
+         */
+        Image logo = new Image("https://i.imgur.com/4jv1pwH.jpg");
+        ImageView logonode = new ImageView(logo);
+        /*
+         *Asetetaan logonoden koko leveys-suunnassa
+         * ja kaytetaan setPreserveRatio(true) suurentamaan
+         * pituus-suunnassa sailyttaen kuvan alkuperaiset
+         * suhteet.
+         */
+        logonode.setFitHeight(125);
+        logonode.setPreserveRatio(true);
+
+
+        /*
+         * Luodaan Label ja asetetaan siihen
+         * setFont-metodilla otsikko fontti.
+         */
+        Label ohje4 = new Label("Kiitos vastauksistasi!" + "\n" + "Alla on yhteenveto kyselystä:");
+        ohje4.setFont(otsikko);
+
+        /*
+         * Tehdaan uusi Label tukokset
+         * johon saadaan to-String metodilla
+         * hakijan tiedot maaritellylla tavalla.
+         */
+        Label tulokset = new Label(hakija.toString());
+        /*
+         * Asetetaan setFont-metodilla fontiksi normal
+         */
+        tulokset.setFont(normal);
+
+        /*
+         * Lisataan addAll avulla valikko5 paneen
+         * kaikki komponentit
+         */
+        valikko5.getChildren().addAll(logonode, ohje4, tulokset);
+        /*
+         * Asetetaan ne setAlignment-metodin avulla keskelle
+         */
+        valikko5.setAlignment(Pos.CENTER);
+
+
+        /*
+         * Luodaan lopeta button
+         * ja asetetaan siihen setFont-metodin avulla fontti normal
+         */
+        Button lopeta = new Button("Lopeta");
+        lopeta.setFont(normal);
+
+        /*
+         * Asetetaan lopeta button paneen
+         */
+        valikko5.getChildren().addAll(lopeta);
+
+
+        /*
+         * Luodaan scene5 ja asetetaan valikko5 siihen.
+         */
+        scene5 = new Scene(valikko5, 700, 700);
+        ikkuna.setTitle("Yhteenveto");
+        ikkuna.setScene(scene5);
+
+        /*
+         * Kutsutaan metodia tallenna ja valitetaan sille
+         * hakija.
+         */
+        tallenna(hakija);
+
+        /*
+         * Luodaan toiminto lopeta buttonille
+         * eli asetetaan ikkunaan scene1 eli paaohjelman
+         * scene.
+         */
+        lopeta.setOnAction(actionEvent -> vaihda_ikkuna1());
+
+    }
+
+    /*
+     *
+     * @param hakija tallenna-metodi hoitaa lopuksi
+     * hakijan tallentamisen oliona.
+     */
+
+    /**
+     * tallenna() metodi
+     * @param hakija
+     */
+    public void tallenna(hakija_yht hakija){
+
+        /*
+         * Olioiden tallenatminen tiedostoon
+         * on koodissa toteutettu paljolti
+         * OHJ 4 viikon tehtava 5 mukaisesti
+         */
+
+        /*
+         * Luodaan try-catch rakenne tiedoston
+         * kirjoituksen ongelmien kasittelyyn.
+         * (Esimerkkina toiminut viikko6 tehtava)
+         */
+        if (hakija instanceof opiskelija){
+        try {
+            File hakijatiedosto = new File("hakijatO.dat");
+            if (hakijatiedosto.length() == 0) {
+                /*
+                 * Luodaan FileOutputStream joka hoitaa tiedoston
+                 * avauksen bittivirtana ja nain saadaan
+                 * tallennettua tavuja suoraan tiedostoon.
+                 */
+                FileOutputStream omatiedosto1 = new FileOutputStream("hakijatO.dat", false);
+
+                /*
+                 * Luodaan ObjectOutput, joka hoitaa
+                 * olion kirjoittamisen tiedostoon ja asetetaan
+                 * sille FileOutputStream olioluokan ilmentyma
+                 * omatiedosto.
+                 */
+                ObjectOutputStream outputFile1 = new ObjectOutputStream(omatiedosto1);
+                System.out.println("Kirjoitetaan tiedostoon hakija.");
+                outputFile1.writeObject(hakija);
+                System.out.println("Kirjoitus suoritettu");
+                /*
+                 * Suljetaan kirjoitettu tiedosto.
+                 */
+                outputFile1.close();
+            } else if (hakijatiedosto.length() > 0) {
+                FileOutputStream omatiedosto2 = new FileOutputStream("hakijatO.dat", true);
+                /*
+                 * Luodaan ObjectOutput, joka hoitaa
+                 * olion kirjoittamisen tiedostoon ja asetetaan
+                 * sille FileOutputStream olioluokan ilmentyma
+                 * omatiedosto.
+                 */
+                ObjectOutputStream outputFile2 = new ObjectOutputStream(omatiedosto2) {
+
+                    protected void writeStreamHeader() throws IOException {
+                        reset();
+                    }
+                };
+                System.out.println("Kirjoitetaan tiedostoon hakija.");
+                outputFile2.writeObject(hakija);
+                System.out.println("Kirjoitus suoritettu");
+                /*
+                 * Suljetaan kirjoitettu tiedosto.
+                 */
+                outputFile2.close();
+            }
+
+        }
+        /*
+         * Luodaan IOException joka kasittelee
+         * poikkeuksen joka voi tulla kirjoituksessa.
+         */
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+        else if (hakija instanceof tyolainen){
+            try {
+                File hakijatiedosto3 = new File("hakijatT.dat");
+                if (hakijatiedosto3.length() == 0) {
+                    /*
+                     * Luodaan FileOutputStream joka hoitaa tiedoston
+                     * avauksen bittivirtana ja nain saadaan
+                     * tallennettua tavuja suoraan tiedostoon.
+                     */
+                    FileOutputStream omatiedosto3 = new FileOutputStream("hakijatT.dat", false);
+
+                    /*
+                     * Luodaan ObjectOutput, joka hoitaa
+                     * olion kirjoittamisen tiedostoon ja asetetaan
+                     * sille FileOutputStream olioluokan ilmentyma
+                     * omatiedosto.
+                     */
+                    ObjectOutputStream outputFile3 = new ObjectOutputStream(omatiedosto3);
+                    System.out.println("Kirjoitetaan tiedostoon hakija.");
+                    outputFile3.writeObject(hakija);
+                    System.out.println("Kirjoitus suoritettu");
+                    /*
+                     * Suljetaan kirjoitettu tiedosto.
+                     */
+                    outputFile3.close();
+                } else if (hakijatiedosto3.length() > 0) {
+                    FileOutputStream omatiedosto4 = new FileOutputStream("hakijatT.dat", true);
+                    /*
+                     * Luodaan ObjectOutput, joka hoitaa
+                     * olion kirjoittamisen tiedostoon ja asetetaan
+                     * sille FileOutputStream olioluokan ilmentyma
+                     * omatiedosto.
+                     */
+                    ObjectOutputStream outputFile4 = new ObjectOutputStream(omatiedosto4) {
+
+                        protected void writeStreamHeader() throws IOException {
+                            reset();
+                        }
+                    };
+                    System.out.println("Kirjoitetaan tiedostoon hakija.");
+                    outputFile4.writeObject(hakija);
+                    System.out.println("Kirjoitus suoritettu");
+                    /*
+                     * Suljetaan kirjoitettu tiedosto.
+                     */
+                    outputFile4.close();
+                }
+
+            }
+            /*
+             * Luodaan IOException joka kasittelee
+             * poikkeuksen joka voi tulla kirjoituksessa.
+             */
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*
+     *  Tulokset_ikkuna()-metodi, jota
+     *  kutsutaan, mikali scene1 naytossa
+     *  painetaan sita kutsuvaa buttonia tulokset.
+     */
+    /**
+     *
+     * @throws Exception
+     */
+
+    public void tulokset_valikko(){
+        /*
+         * Luodaan pystysuuntainen
+         *  VBox- pane valikko johon
+         *  voidaan asettaa komponentteja
+         */
+        VBox valikko = new VBox();
+
+        /*
+         * Luodaan valikkon 10 bixelin
+         * valit komponettien valille.
+         * setSpacing metodin avulla.
+         */
+        valikko.setSpacing(10);
+
+        /*
+         * Luodaan valikkoon aloitus ja tulokset
+         * buttonit ja asetetaan niihin aiemmin
+         * luotu fontti setFont() metodin avulla
+         */
+        Button tpainike=new Button("Tutkinnon omaavien tulokset ");
+        tpainike.setFont(normal);
+        Button opainike=new Button("Opiskelijoiden tulokset");
+        opainike.setFont(normal);
+
+        Button palaa = new Button("Palaa Alkuun");
+        palaa.setFont(normal);
+
+
+        Image logo = new Image("https://i.imgur.com/4jv1pwH.jpg");
+        ImageView logonode = new ImageView(logo);
+
+        /*
+         *Asetetaan logonoden koko leveys-suunnassa setFitHeight avulla
+         * ja kaytetaan setPreserveRatio(true) suurentamaan
+         * pituus-suunnassa sailyttaen kuvan alkuperaiset
+         * suhteet.
+         */
+        logonode.setFitHeight(125);
+        logonode.setPreserveRatio(true);
+
+        /*
+         * Asetetaan valikkoon
+         * logonode ja button-oliot ja asetetaan ne keskelle.
+         */
+        valikko.getChildren().addAll(logonode,tpainike,opainike,palaa);
+        valikko.setAlignment(Pos.CENTER);
+
+
+        /*
+         * luodaan scene-luokan olio scene1, johon
+         * valikko asetetaan ja luodaan siita halutun
+         * kokoinen.
+         */
+        scene6 = new Scene(valikko, 700, 700);
+        /*
+         * luodaan ikkunalle otsikko
+         */
+        ikkuna.setTitle("Tulokset valikko");
+        ikkuna.setScene(scene6);
+        ikkuna.show();
+
+
+        opainike.setOnAction(actionEvent -> {
+            try {
+                tulokset_o();
+            } catch (Exception e) {
+                System.out.println("Ongelma");
+            }
+        });
+
+        tpainike.setOnAction(actionEvent -> {
+            try {
+                tulokset_t();
+            } catch (Exception e) {
+                System.out.println("Ongelma");
+            }
+        });
+        palaa.setOnAction(actionEvent -> {
+            try {
+                vaihda_ikkuna1();
+            } catch (Exception e) {
+                System.out.println("Ongelma");
+            }
+        });
+
+    }
+
+
+    public void tulokset_o() throws Exception {
+        /*
+         *
+         * Luodaan pystysuuntainen Paneluokan
+         * pane valikko_t
+         */
+        ScrollPane selaavalikkoa1=new ScrollPane();
+        VBox valikko_t = new VBox();
+        selaavalikkoa1.setFitToHeight(true);
+        selaavalikkoa1.setFitToWidth(true);
+        /*
+         * Luodaan setSpacing-metodin avulla
+         * valit komponenttien valille.
+         */
+        valikko_t.setSpacing(10);
+        /*
+         * Luodaan tieto Label
+         */
+        Label tieto = new Label("Ohessa yhteenvedot opiskeja hakijoista");
+        /*
+         * Asetetaan setFont-metodin avulla sille
+         * otsikko fontti.
+         */
+        tieto.setFont(otsikko);
+        /*
+         * Asetetaan valikko_t setAlignment-metodin
+         * avulla keskelle.
+         */
+        valikko_t.setAlignment(Pos.CENTER);
+        /*
+         * Lisataan valikko_t paneen
+         * tieto Label
+         */
+        valikko_t.getChildren().addAll(tieto);
+        /*
+         * Luodaan palaa button
+         */
+        Button palaa=new Button("Palaa Alkuun");
+        /*
+         * Muutetan fontti setFont-metodilla
+         */
+        palaa.setFont(normal);
+
+        /*
+         * Luodaan try-catch rakenne
+         * poikkeuksien kasittelyyn
+         * tiedostosta lukemiseksi.
+         *
+         * Olioiden lukeminen tiedostosta
+         * on koodissa toteutettu paljolti
+         * OHJ 4 viikon tehtava 6 mukaisesti
+         */
+
+        try{
+            /*
+             * Luodaan FileOutputStream joka hoitaa tiedoston
+             * avauksen bittivirtana ja nain saadaan
+             * luettua tavuja suoraan tiedostoon.
+             */
+            FileInputStream omatiedosto=new FileInputStream("hakijatO.dat");
+            /*Luodaan ObjectInputStream, joka hoitaa
+             * olion lukemisen tiedostosta ja asetetaan
+             * sille FileOutputStream olioluokan ilmentyma
+             * omatiedosto.
+             */
+            ObjectInputStream inputFile=new ObjectInputStream(omatiedosto);
+            System.out.println("Tietoja luetaan tiedostosta:");
+            opiskelija hakija;
+            /*
+             * Luodaan boolean arvo tiedostoLoppu
+             * jolloin lukemista tiedostosta suoritetaan
+             * niin pitkaan, kuin siina on dataa.
+             */
+            boolean tiedostoLoppu=false;
+            /*
+             * Luetaan tiedostoa while-ehdon mukaan
+             * kunnes tiedostoLoppu on True
+             */
+            while (!tiedostoLoppu){
+                try{
+                    hakija=(opiskelija) inputFile.readObject();
+                    System.out.println(hakija);
+
+                    //if  (hakija instanceof opiskelija){
+                       // opiskelija opiskelijahakija = (opiskelija) hakija;
+
+
+                        /*
+                         * Luodaan nimi Label ja lisataan siihen get-metodilla luettavan
+                         * olion nimi
+                         */
+                        Label nimi=new Label("Nimi: "+hakija.getEtu_nimi()+" "+hakija.getSuku_nimi());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        nimi.setFont(normal);
+
+                        /*
+                         * Luodaan puh Label ja lisataan siihen get-metodilla luettavan
+                         * olion puh
+                         */
+                        Label puh=new Label("Puh: "+hakija.getPuh());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        puh.setFont(normal);
+
+                        /*
+                         * Luodaan apist Label ja lisataan siihen get-metodilla luettavan
+                         * olion A-osion pisteet
+                         */
+                        Label apist=new Label("A:n pisteet: "+hakija.getA_p());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        apist.setFont(normal);
+
+                        /*
+                         * Luodaan bpist Label ja lisataan siihen get-metodilla luettavan
+                         * olion B-osion pisteet
+                         */
+                        Label bpist=new Label("B:n pisteet: "+hakija.getB_p());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        bpist.setFont(normal);
+
+                        /*
+                         * Tutkitaan instanceof avulla kuuluko hakija
+                         * opiskelija luokkaan. Ja jos kuuluu
+                         * toteutetaab if ehto
+                         */
+                        /*
+                         * Luodaan yht Label ja lisataan siihen get-metodilla luettavan
+                         * opiskelija olion yhteensa pisteet ja lasketaan ne
+                         * Integer.sum()-metodin avulla
+                         */
+                        Label yht=new Label("Yhteensä: "+Integer.sum(hakija.getA_p(),hakija.getB_p()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        yht.setFont(normal);
+
+                        /*
+                         * Luodaan ala Label ja lisataan siihen get-metodilla luettavan
+                         * opiskelija olion ala.
+                         */
+                        Label ala=new Label("Ala: "+(hakija.getAla()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        ala.setFont(normal);
+
+                        /*
+                         * Luodaan vuosi Label ja lisataan siihen get-metodilla luettavan
+                         * opiskelija olion vuosi.
+                         */
+                        Label vuosi=new Label("Opiskeltava lukuvuosi: "+(hakija.getLukuvuosi()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        vuosi.setFont(normal);
+                        /*
+                         * Luodaan Viiva erottamaan
+                         * eri hakijoiden tietoja
+                         */
+                        Line erotin = new Line(0, 0, 200, 0);
+                        erotin.setStyle("-fx-stroke: black;");
+
+                        /*
+                         * Lisataan ne valikko_t paneen
+                         */
+                        valikko_t.getChildren().addAll(nimi,puh,apist,bpist,yht,ala,vuosi,erotin);
+                        selaavalikkoa1.setContent(valikko_t);
+                        valikko_t.setAlignment(Pos.CENTER);
+
+                }
+                catch (EOFException e) {
+                    tiedostoLoppu = true;
+                }
+            }
+            inputFile.close();
+        }
+        catch (FileNotFoundException e){
+            System.out.println("Tiedostoa ei löydy");
+        }
+
+        valikko_t.getChildren().addAll(palaa);
+        selaavalikkoa1.setContent(valikko_t);
+
+        /*
+         * Luodaan scene6 ja asetetaan valikko_t siihen
+         */
+        scene7 = new Scene(selaavalikkoa1, 700, 700);
+        ikkuna.setTitle("Tulokset opiskelijalla");
+        ikkuna.setScene(scene7);
+        /*
+         * Luodaan tapahtuma, kun palaa buttonia painetaan.
+         * Vaihdetaan ikkunaan siis scene1 eli paaohjelman naytto.
+         */
+        palaa.setOnAction(actionEvent -> vaihda_ikkuna1());
+    }
+    public void tulokset_t() throws Exception {
+        ScrollPane selaavalikkoa2 = new ScrollPane();
+        VBox valikko_t = new VBox();
+        selaavalikkoa2.setFitToHeight(true);
+        selaavalikkoa2.setFitToWidth(true);
+        /*
+         * Luodaan setSpacing-metodin avulla
+         * valit komponenttien valille.
+         */
+        valikko_t.setSpacing(10);
+        /*
+         * Luodaan tieto Label
+         */
+        Label tieto = new Label("Ohessa yhteenvedot tutkinnon omaavista hakijoista");
+        /*
+         * Asetetaan setFont-metodin avulla sille
+         * otsikko fontti.
+         */
+        tieto.setFont(otsikko);
+        /*
+         * Asetetaan valikko_t setAlignment-metodin
+         * avulla keskelle.
+         */
+        valikko_t.setAlignment(Pos.CENTER);
+        /*
+         * Lisataan valikko_t paneen
+         * tieto Label
+         */
+        valikko_t.getChildren().addAll(tieto);
+        /*
+         * Luodaan palaa button
+         */
+        Button palaa = new Button("Palaa Alkuun");
+        /*
+         * Muutetan fontti setFont-metodilla
+         */
+        palaa.setFont(normal);
+
+        /*
+         * Luodaan try-catch rakenne
+         * poikkeuksien kasittelyyn
+         * tiedostosta lukemiseksi.
+         *
+         * Olioiden lukeminen tiedostosta
+         * on koodissa toteutettu paljolti
+         * OHJ 4 viikon tehtava 6 mukaisesti
+         */
+
+        try {
+            /*
+             * Luodaan FileOutputStream joka hoitaa tiedoston
+             * avauksen bittivirtana ja nain saadaan
+             * luettua tavuja suoraan tiedostoon.
+             */
+            FileInputStream omatiedosto = new FileInputStream("hakijatT.dat");
+            /*Luodaan ObjectInputStream, joka hoitaa
+             * olion lukemisen tiedostosta ja asetetaan
+             * sille FileOutputStream olioluokan ilmentyma
+             * omatiedosto.
+             */
+            ObjectInputStream inputFile = new ObjectInputStream(omatiedosto);
+            System.out.println("Tietoja luetaan tiedostosta:");
+            tyolainen hakija;
+            /*
+             * Luodaan boolean arvo tiedostoLoppu
+             * jolloin lukemista tiedostosta suoritetaan
+             * niin pitkaan, kuin siina on dataa.
+             */
+            boolean tiedostoLoppu = false;
+            /*
+             * Luetaan tiedostoa while-ehdon mukaan
+             * kunnes tiedostoLoppu on True
+             */
+            while (!tiedostoLoppu) {
+                try {
+                    hakija = (tyolainen) inputFile.readObject();
+                    System.out.println(hakija);
+
+                        /*
+                         * Luodaan nimi Label ja lisataan siihen get-metodilla luettavan
+                         * olion nimi
+                         */
+                        Label nimi = new Label("Nimi: " + hakija.getEtu_nimi() + " " + hakija.getSuku_nimi());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        nimi.setFont(normal);
+
+                        /*
+                         * Luodaan puh Label ja lisataan siihen get-metodilla luettavan
+                         * olion puh
+                         */
+                        Label puh = new Label("Puh: " + hakija.getPuh());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        puh.setFont(normal);
+
+                        /*
+                         * Luodaan apist Label ja lisataan siihen get-metodilla luettavan
+                         * olion A-osion pisteet
+                         */
+                        Label apist = new Label("A:n pisteet: " + hakija.getA_p());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        apist.setFont(normal);
+
+                        /*
+                         * Luodaan bpist Label ja lisataan siihen get-metodilla luettavan
+                         * olion B-osion pisteet
+                         */
+                        Label bpist = new Label("B:n pisteet: " + hakija.getB_p());
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        bpist.setFont(normal);
+
+                        /*
+                         * Tutkitaan instanceof avulla kuuluko hakija
+                         * opiskelija luokkaan. Ja jos kuuluu
+                         * toteutetaab if ehto
+                         */
+                        /*
+                         * Luodaan yht Label ja lisataan siihen get-metodilla luettavan
+                         * tyolainen olion yhteensa pisteet ja lasketaan ne
+                         * Integer.sum()-metodin avulla
+                         */
+                        Label yht = new Label("Yhteensä: " + Integer.sum(hakija.getA_p(), hakija.getB_p()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        yht.setFont(normal);
+
+                        /*
+                         * Luodaan ala Label ja lisataan siihen get-metodilla luettavan
+                         * tyolainen olion ala.
+                         */
+                        Label ala = new Label("Tutkinto: " + (hakija.getTutkinto()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        ala.setFont(normal);
+
+                        /*
+                         * Luodaan vuosi Label ja lisataan siihen get-metodilla luettavan
+                         * tyolainen olion vuosi.
+                         */
+                        Label vuosi = new Label("Työkokemusta vuosina: " + (hakija.getMonta_vuotta()));
+                        /*
+                         * Muutetan fontti setFont-metodilla
+                         */
+                        vuosi.setFont(normal);
+                        /*
+                         * Luodaan Viiva erottamaan
+                         * eri hakijoiden tietoja
+                         */
+                        Line erotin = new Line(0, 0, 200, 0);
+                        erotin.setStyle("-fx-stroke: black;");
+                        /*
+                         * Lisataan ne valikko_t paneen
+                         */
+                        valikko_t.getChildren().addAll(nimi, puh, apist, bpist, yht, ala, vuosi, erotin);
+                        selaavalikkoa2.setContent(valikko_t);
+                        valikko_t.setAlignment(Pos.CENTER);
+
+                }
+
+                catch (EOFException e) {
+                tiedostoLoppu = true;
+            }
+        }
+        inputFile.close();
+    }
+        catch (FileNotFoundException e){
+        System.out.println("Tiedostoa ei löydy");
+    }
+
+        valikko_t.getChildren().addAll(palaa);
+        selaavalikkoa2.setContent(valikko_t);
+
+        /*
+         * Luodaan scene6 ja asetetaan valikko_t siihen
+         */
+        scene8 = new Scene(selaavalikkoa2, 700, 700);
+        ikkuna.setTitle("Tulokset tutkinnolla");
+        ikkuna.setScene(scene8);
+        /*
+         * Luodaan tapahtuma, kun palaa buttonia painetaan.
+         * Vaihdetaan ikkunaan siis scene1 eli paaohjelman naytto.
+         */
+        palaa.setOnAction(actionEvent -> vaihda_ikkuna1());
+
+    }
+
+}
