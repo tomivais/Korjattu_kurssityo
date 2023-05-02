@@ -1,0 +1,56 @@
+//Aliluokka tyolainen
+
+
+/**
+  AliLuokka tyolainen perii yliluokan hakija_yht.
+ Tyolaisella on kenttina viimeisin työ, tutkinto ja monta vuotta.
+ */
+public class tyolainen extends hakija_yht {
+    /**
+     * valmistuneen tiedot
+     */
+    private String viimeisin_tyo;
+    private String tutkinto;
+    private String monta_vuotta;
+
+
+    /**
+     Asettaa viimeisimmän työn tiedon työläiselle.
+     @param viimeisin_tyo viimeisin työ, joka halutaan asettaa työläiselle.
+     */
+    public void setViimeisin_tyo(String viimeisin_tyo) {
+        this.viimeisin_tyo = viimeisin_tyo;
+    }
+
+    /**
+     Asettaa monta vuotta -tiedon työläiselle.
+     @param monta_vuotta monta vuotta, joka halutaan asettaa työläiselle.
+     */
+    public void setMonta_vuotta(String monta_vuotta) {
+        this.monta_vuotta = monta_vuotta;
+    }
+    /**
+     Palauttaa monta vuotta -tiedon tyolaisesta.
+     @return monta vuotta -tieto tyolaisesta.
+     */
+    public String getMonta_vuotta() {
+        return monta_vuotta;
+    }
+
+    /**
+     Palauttaa tutkinto-tiedon tyolaisesta.
+     @return tutkinto- tieto tyolaisesta.
+     */
+    public String getTutkinto() {
+        return tutkinto;
+    }
+
+    /**
+     Asettaa tutkinto-tiedon tyolaiselle.
+     @param tutkinto tutkinto, joka halutaan asettaa tyolaiselle.
+     */
+    public void setTutkinto(String tutkinto) {
+        this.tutkinto = tutkinto;
+    }
+}
+
